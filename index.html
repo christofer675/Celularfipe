@@ -32,7 +32,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
   <div class="wide"><label for="q">Buscar aparelho</label><input id="q" placeholder="Ex.: iPhone 13, Galaxy S23"></div>
   <div><label for="brand">Marca</label><select id="brand"><option value="">Todas</option><option>Apple</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option></select></div>
   <div><label for="storage">Armazenamento</label><select id="storage"><option value="">Todos</option><option>64 GB</option><option>128 GB</option><option>256 GB</option><option>512 GB</option></select></div>
- </div><div class="actions"><button class="primary" id="searchBtn">Buscar preços</button><button class="secondary" id="clearBtn">Limpar filtros</button></div>
+ </div><div class="actions"><button class="primary" id="searchBtn">Buscar preços</button><button class="secondary" id="clearBtn">Limpar filtros</button></div><div class="field"><label for="price-range">Faixa de Preço</label><select id="price-range"><option value="">Qualquer preço</option><option value="1000">Até R$ 1.000</option><option value="2000">Até R$ 2.000</option><option value="3000">Até R$ 3.000</option><option value="5000">Acima de R$ 3.000</option></select></div>
 </div>
 
 <div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">Verificando banco de dados...</div></div></div>
@@ -42,10 +42,61 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
  <div><div class="brand" id="rbrand"></div><div class="model" id="rmodel"></div><div class="storage" id="rstorage"></div><div class="bigprice" id="rprice"></div><div class="muted">Estimativa a partir do preço-base e dos ajustes selecionados.</div></div>
  <div><label for="condition">Conservação</label><select id="condition"><option value="1">Excelente</option><option value=".9" selected>Bom</option><option value=".75">Regular</option><option value=".55">Ruim / com defeito</option></select><label for="battery" style="margin-top:13px">Condição da bateria</label><input id="battery" type="range" min="60" max="100" value="90"><div class="sub" id="batteryText">90%</div><div class="stats"><div class="stat"><span>Compra estimada</span><b id="buy"></b></div><div class="stat"><span>Venda estimada</span><b id="sell"></b></div></div></div>
  </div><div class="actions"><button class="secondary" id="closeBtn">Fechar</button></div></section>
-<footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer>
+<footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer><button id="share-whatsapp" onclick="compartilharWhatsApp()" style="background-color: #25D366; color: white; margin-top: 10px; display: none; padding: 10px; border-radius: 8px; border: none; width: 100%; font-weight: bold;">Partilhar no WhatsApp 📱</button>
 </main>
 
-<script>
+<script>// Variável global para guardar o último telemóvel consultado
+let telemovelAtual = null;
+
+// Função chamada para buscar os dados (atualize a sua função de busca existente com esta lógica)
+async function buscarCelulares() {
+  let query = supabase.from('celulares').select('*');
+
+  // Filtro de Marca (se aplicável no seu app)
+  const marcaEl = document.getElementById('brand');
+  if (marcaEl && marcaEl.value) {
+    query = query.eq('marca', marcaEl.value);
+  }
+
+  // Filtro de Faixa de Preço que acabamos de adicionar
+  const faixaPreco = document.getElementById('price-range').value;
+  if (faixaPreco) {
+    query = query.lte('preco', Number(faixaPreco));
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error('Erro ao buscar:', error);
+    return;
+  }
+
+  // Exibir resultados na tela (exemplo básico)
+  // Certifique-se de chamar a função que desenha os cards ou resultados aqui
+}
+
+// Função para mostrar o resultado e ativar o botão do WhatsApp
+function exibirResultado(celular) {
+  telemovelAtual = celular; // Guarda os dados para a partilha
+
+  // Exemplo de preenchimento dos campos de resultado que já tem no HTML
+  document.getElementById('rbrand').innerText = celular.marca + ' - ' + celular.modelo;
+  
+  // Mostra o botão do WhatsApp que adicionámos
+  const btnWhatsapp = document.getElementById('share-whatsapp');
+  if (btnWhatsapp) {
+    btnWhatsapp.style.display = 'block';
+  }
+}
+
+// Função de partilha para o WhatsApp
+function compartilharWhatsApp() {
+  if (!telemovelAtual) return;
+
+  const texto = `📱 *Consulta celularFIPE*\n\nModelo: *${telemovelAtual.modelo}*\nPreço Médio FIPE: *R$ ${telemovelAtual.preco}*\n\nConsultado via app celularFIPE!`;
+  
+  const urlWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+  window.open(urlWhatsApp, '_blank');
+}
 const seed=[
  {id:1,brand:'Apple',model:'iPhone 13',storage:'128 GB',year:2021,base_price:1900,updated_at:'2026-10-16'},
  {id:2,brand:'Samsung',model:'Galaxy S23',storage:'256 GB',year:2023,base_price:2100,updated_at:'2026-10-16'},
