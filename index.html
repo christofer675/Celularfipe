@@ -28,12 +28,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
 <div class="panel search">
  <div class="fields">
   <div class="wide"><label for="q">Buscar aparelho</label><input id="q" placeholder="Ex.: iPhone 13, Galaxy S23"></div>
-  <div><label for="brand">Marca</label><select id="brand"><option value="">Todas</option><option>Apple</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option></select></div>
+  <div><label for="brand">Marca</label><select id="brand"><option value="">Todas</option><option>Apple</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option><option>Realme</option></select></div>
   <div><label for="storage">Armazenamento</label><select id="storage"><option value="">Todos</option><option>64 GB</option><option>128 GB</option><option>256 GB</option><option>512 GB</option></select></div>
  </div><div class="actions"><button class="primary" id="searchBtn">Buscar preços</button><button class="secondary" id="clearBtn">Limpar filtros</button></div>
 </div>
 
-<div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">Verificando banco de dados...</div></div></div>
+<div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">A carregar...</div></div></div>
 <section class="grid" id="cards"></section>
 
 <section class="result" id="result"><div class="resultgrid">
@@ -43,12 +43,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
 <footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer>
 </main>
 
-<script>
+<script type="module">
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
+
 const seed=[
- {id:1,brand:'Apple',model:'iPhone 13',storage:'128 GB',year:2021,base_price:1900,updated_at:'2026-10-16'},
- {id:2,brand:'Samsung',model:'Galaxy S23',storage:'256 GB',year:2023,base_price:2100,updated_at:'2026-10-16'},
- {id:3,brand:'Motorola',model:'Moto G84',storage:'256 GB',year:2023,base_price:850,updated_at:'2026-10-16'},
- {id:4,brand:'Xiaomi',model:'Redmi Note 13',storage:'256 GB',year:2024,base_price:900,updated_at:'2026-10-16'}
+ {id:1,brand:'Apple',model:'iPhone 13',storage:'128 GB',year:2021,base_price:1500,image_url:'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13.jpg',updated_at:'2026-10-16'},
+ {id:2,brand:'Samsung',model:'Galaxy S23',storage:'256 GB',year:2023,base_price:1600,image_url:'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg',updated_at:'2026-10-16'}
 ];
 
 let phones = seed, selected = null;
@@ -61,7 +61,7 @@ function render(msgExtra){
  const arr=phones.filter(p=>(!q||`${p.brand} ${p.model} ${p.storage}`.toLowerCase().includes(q))&&(!b||p.brand===b)&&(!s||p.storage===s));
  $('count').textContent = msgExtra ? `${arr.length} modelo(s) — ${msgExtra}` : `${arr.length} modelo(s) encontrado(s)`;
  $('cards').innerHTML=arr.map(p=>`<article class="card">
-  ${p.image_url ? `<img src="${safe(p.image_url)}" alt="${safe(p.model)}" class="phone-thumb">` : ''}
+  ${(p.image_url || p.image_path) ? `<img src="${safe(p.image_url \vert{}\vert{} p.image_path)}" alt="${safe(p.model)}" class="phone-thumb" referrerpolicy="no-referrer" loading="lazy">` : ''}
   <div class="cardtop"><div><div class="brand">${safe(p.brand)}</div><div class="model">${safe(p.model)}</div><div class="storage">${safe(p.storage)} · ${safe(p.year)}</div></div><span class="tag">REFERÊNCIA</span></div>
   <div class="price">${money(p.base_price)}</div><div class="muted">Preço-base de referência</div><div class="sub">Revisado: ${safe(p.updated_at||'recente')}</div>
   <div class="actions"><button class="primary" onclick="openPhone(${p.id})">Avaliar aparelho</button></div>
@@ -88,35 +88,25 @@ $('searchBtn').onclick=()=>render();$('q').oninput=()=>render();$('brand').oncha
 $('clearBtn').onclick=()=>{$('q').value='';$('brand').value='';$('storage').value='';render()};
 $('condition').onchange=estimate;$('battery').oninput=estimate;$('closeBtn').onclick=()=>$('result').classList.remove('show');
 
-// Renderiza imediatamente os modelos para a tela NUNCA travar
-render("Carregando banco online...");
+render("A carregar do Supabase...");
 
-// Tenta ler o config.js automaticamente sem travar a página se der erro
-async function conectarBanco(){
+async function ligarSupabase(){
  try {
-  const cfg = await import('./config.js');
-  const url = cfg.SUPABASE_URL;
-  const key = cfg.SUPABASE_ANON_KEY;
-  if(url && url.startsWith('https://') && key && window.supabase){
-   const client = window.supabase.createClient(url, key);
+  if(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase){
+   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
    const {data, error} = await client.from('phones').select('*');
-   if(error){
-    render(${(p.image_url || p.image_path) ? `<img src="${safe(p.image_url || p.image_path)}" alt="${safe(p.model)}" class="phone-thumb" referrerpolicy="no-referrer" loading="lazy">` : ''}
-);
-   } else if(data && data.length > 0){
+   if(!error && data && data.length > 0){
     phones = data;
-    render("Conectado ao Supabase!");
+    render();
    } else {
-    render("Supabase conectado (tabela vazia)");
+    render("Erro ao carregar dados");
    }
-  } else {
-   render("Modo demonstração (config.js incompleto)");
   }
  } catch(e) {
-  render("Modo demonstração (" + e.message + ")");
+  render("Erro de ligação");
  }
 }
-conectarBanco();
+ligarSupabase();
 </script>
 </body>
 </html>
