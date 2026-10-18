@@ -7,9 +7,9 @@
   "theme_color": "#101827",
   "icons": [
     {
-      "src": "icone-512.png",
+      "src": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=512&h=512&fit=crop",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
