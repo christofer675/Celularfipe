@@ -24,34 +24,33 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="top"><div class="logo">celular<span>FIPE</span></div><div class="pill">BETA</div></div><h1>Quanto vale seu celular usado?</h1><p>Consulte uma referência de preço e estime o valor conforme o estado de conservação.</p></div></header>
+<header><div class="wrap"><div class="top"><div class="logo">celular<span>FIPE</span></div><div class="pill">BETA</div></div><h1>Quanto vale seu celular usado?</h1><p>Consulte uma referencia de preco e estime o valor conforme o estado de conservacao.</p></div></header>
 <main>
 <div class="panel search">
  <div class="fields">
   <div class="wide"><label for="q">Buscar aparelho</label><input id="q" placeholder="Ex.: iPhone 13, Galaxy S23"></div>
   <div><label for="brand">Marca</label><select id="brand"><option value="">Todas</option><option>Apple</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option></select></div>
   <div><label for="storage">Armazenamento</label><select id="storage"><option value="">Todos</option><option>64 GB</option><option>128 GB</option><option>256 GB</option><option>512 GB</option></select></div>
-  <div class="wide"><label for="price-range">Faixa de Preço</label><select id="price-range"><option value="">Qualquer preço</option><option value="1000">Até R$ 1.000</option><option value="2000">Até R$ 2.000</option><option value="3000">Até R$ 3.000</option><option value="5000">Acima de R$ 3.000</option></select></div>
+  <div class="wide"><label for="price-range">Faixa de Preco</label><select id="price-range"><option value="">Qualquer preco</option><option value="1000">Ate R$ 1.000</option><option value="2000">Ate R$ 2.000</option><option value="3000">Ate R$ 3.000</option><option value="5000">Acima de R$ 3.000</option></select></div>
  </div>
- <div class="actions"><button class="primary" id="searchBtn">Buscar preços</button><button class="secondary" id="clearBtn">Limpar filtros</button></div>
+ <div class="actions"><button class="primary" id="searchBtn">Buscar precos</button><button class="secondary" id="clearBtn">Limpar filtros</button></div>
 </div>
 
-<div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">Verificando banco de dados...</div></div></div>
+<div class="head"><div><h2>Referencias de aparelhos</h2><div class="sub" id="count">Verificando banco de dados...</div></div></div>
 <section class="grid" id="cards"></section>
 
 <section class="result" id="result"><div class="resultgrid">
- <div><div class="brand" id="rbrand"></div><div class="model" id="rmodel"></div><div class="storage" id="rstorage"></div><div class="bigprice" id="rprice"></div><div class="muted">Estimativa a partir do preço-base e dos ajustes selecionados.</div></div>
- <div><label for="condition">Conservação</label><select id="condition"><option value="1">Excelente</option><option value=".9" selected>Bom</option><option value=".75">Regular</option><option value=".55">Ruim / com defeito</option></select><label for="battery" style="margin-top:13px">Condição da bateria</label><input id="battery" type="range" min="60" max="100" value="90"><div class="sub" id="batteryText">90%</div><div class="stats"><div class="stat"><span>Compra estimada</span><b id="buy"></b></div><div class="stat"><span>Venda estimada</span><b id="sell"></b></div></div></div>
+ <div><div class="brand" id="rbrand"></div><div class="model" id="rmodel"></div><div class="storage" id="rstorage"></div><div class="bigprice" id="rprice"></div><div class="muted">Estimativa a partir do preco-base e dos ajustes selecionados.</div></div>
+ <div><label for="condition">Conservacao</label><select id="condition"><option value="1">Excelente</option><option value=".9" selected>Bom</option><option value=".75">Regular</option><option value=".55">Ruim / com defeito</option></select><label for="battery" style="margin-top:13px">Condicao da bateria</label><input id="battery" type="range" min="60" max="100" value="90"><div class="sub" id="batteryText">90%</div><div class="stats"><div class="stat"><span>Compra estimada</span><b id="buy"></b></div><div class="stat"><span>Venda estimada</span><b id="sell"></b></div></div></div>
  </div>
  <div class="actions"><button class="secondary" id="closeBtn">Fechar</button></div>
 </section>
 
-<footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer>
+<footer>celularFIPE e um nome provisorio e nao e afiliado a FIPE ou aos fabricantes.</footer>
 <button id="share-whatsapp" onclick="compartilharWhatsApp()" style="background-color: #25D366; color: white; margin-top: 10px; display: none; padding: 10px; border-radius: 8px; border: none; width: 100%; font-weight: bold;">Partilhar no WhatsApp </button>
 </main>
 
 <script>
-// Variável global para guardar o último telemóvel consultado
 let telemovelAtual = null;
 
 const seed=[
@@ -83,8 +82,8 @@ function render(msgExtra){
  $('count').textContent = msgExtra ? `${arr.length} modelo(s) — ${msgExtra}` : `${arr.length} modelo(s) encontrado(s)`;
  $('cards').innerHTML=arr.map(p=>`<article class="card">
   ${p.image_url ? `<img src="${safe(p.image_url)}" alt="${safe(p.model)}" class="phone-thumb">` : ''}
-  <div class="cardtop"><div><div class="brand">${safe(p.brand)}</div><div class="model">${safe(p.model)}</div><div class="storage">${safe(p.storage)} · ${safe(p.year)}</div></div><span class="tag">REFERÊNCIA</span></div>
-  <div class="price">${money(p.base_price)}</div><div class="muted">Preço-base de referência</div><div class="sub">Revisado: ${safe(p.updated_at||'recente')}</div>
+  <div class="cardtop"><div><div class="brand">${safe(p.brand)}</div><div class="model">${safe(p.model)}</div><div class="storage">${safe(p.storage)} · ${safe(p.year)}</div></div><span class="tag">REFERENCIA</span></div>
+  <div class="price">${money(p.base_price)}</div><div class="muted">Preco-base de referencia</div><div class="sub">Revisado: ${safe(p.updated_at||'recente')}</div>
   <div class="actions"><button class="primary" onclick="openPhone(${p.id})">Avaliar aparelho</button></div>
  </article>`).join('')||'<div class="panel">Nenhum aparelho encontrado.</div>';
 }
@@ -93,7 +92,6 @@ window.openPhone = function(id){
  selected=phones.find(p=>Number(p.id)===Number(id));
  if(!selected)return;
  
- // Guarda o telemóvel atual para a partilha via WhatsApp
  telemovelAtual = selected;
 
  $('result').classList.add('show');$('rbrand').textContent=selected.brand;
@@ -103,7 +101,6 @@ window.openPhone = function(id){
  
  estimate();
 
- // Mostra o botão do WhatsApp assim que abre a avaliação
  const btnWhatsapp = document.getElementById('share-whatsapp');
  if (btnWhatsapp) {
    btnWhatsapp.style.display = 'block';
@@ -119,11 +116,10 @@ function estimate(){
  $('batteryText').textContent=$('battery').value+'%';
 }
 
-// Função de partilha para o WhatsApp
 function compartilharWhatsApp() {
   if (!telemovelAtual) return;
 
-  const texto = ` *Consulta celularFIPE*\n\nModelo: *${telemovelAtual.brand} ${telemovelAtual.model} (${telemovelAtual.storage})*\nPreço Médio FIPE: *${money(telemovelAtual.base_price)}*\n\nConsultado via app celularFIPE!`;
+  const texto = ` *Consulta celularFIPE*\n\nModelo: *${telemovelAtual.brand} ${telemovelAtual.model} (${telemovelAtual.storage})*\nPreco Medio FIPE: *${money(telemovelAtual.base_price)}*\n\nConsultado via app celularFIPE!`;
   
   const urlWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
   window.open(urlWhatsApp, '_blank');
@@ -139,10 +135,8 @@ $('closeBtn').onclick=()=>{$('result').classList.remove('show');
   if (btnWhatsapp) btnWhatsapp.style.display = 'none';
 };
 
-// Renderiza imediatamente os modelos para a tela NUNCA travar
 render("Carregando banco online...");
 
-// Tenta ler o config.js automaticamente sem travar a página se der erro
 async function conectarBanco(){
  try {
   const cfg = await import('./config.js');
@@ -160,10 +154,10 @@ async function conectarBanco(){
     render("Supabase conectado (tabela vazia)");
    }
   } else {
-   render("Modo demonstração (config.js incompleto)");
+   render("Modo demonstracao (config.js incompleto)");
   }
  } catch(e) {
-  render("Modo demonstração (" + e.message + ")");
+  render("Modo demonstracao (" + e.message + ")");
  }
 }
 conectarBanco();
