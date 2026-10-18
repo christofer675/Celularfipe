@@ -4,7 +4,6 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101827"><title>celularFIPE</title>
 <link rel="manifest" href="manifest.json">
-<link rel="manifest" href="manifest.json">
 <link rel="icon" href="512.png" type="image/png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -25,83 +24,36 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="top"><div class="logo">celular<span>FIPE</span></div><div class="pill">BETA</div></div><h1>Quanto vale seu celular usado?</h1><p>Consulte uma referÃªncia de preÃ§o e estime o valor conforme o estado de conservaÃ§Ã£o.</p></div></header>
+<header><div class="wrap"><div class="top"><div class="logo">celular<span>FIPE</span></div><div class="pill">BETA</div></div><h1>Quanto vale seu celular usado?</h1><p>Consulte uma referência de preço e estime o valor conforme o estado de conservação.</p></div></header>
 <main>
 <div class="panel search">
  <div class="fields">
   <div class="wide"><label for="q">Buscar aparelho</label><input id="q" placeholder="Ex.: iPhone 13, Galaxy S23"></div>
   <div><label for="brand">Marca</label><select id="brand"><option value="">Todas</option><option>Apple</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option></select></div>
   <div><label for="storage">Armazenamento</label><select id="storage"><option value="">Todos</option><option>64 GB</option><option>128 GB</option><option>256 GB</option><option>512 GB</option></select></div>
- </div><div class="actions"><button class="primary" id="searchBtn">Buscar preÃ§os</button><button class="secondary" id="clearBtn">Limpar filtros</button></div><div class="field"><label for="price-range">Faixa de PreÃ§o</label><select id="price-range"><option value="">Qualquer preÃ§o</option><option value="1000">AtÃ© R$ 1.000</option><option value="2000">AtÃ© R$ 2.000</option><option value="3000">AtÃ© R$ 3.000</option><option value="5000">Acima de R$ 3.000</option></select></div>
+  <div class="wide"><label for="price-range">Faixa de Preço</label><select id="price-range"><option value="">Qualquer preço</option><option value="1000">Até R$ 1.000</option><option value="2000">Até R$ 2.000</option><option value="3000">Até R$ 3.000</option><option value="5000">Acima de R$ 3.000</option></select></div>
+ </div>
+ <div class="actions"><button class="primary" id="searchBtn">Buscar preços</button><button class="secondary" id="clearBtn">Limpar filtros</button></div>
 </div>
 
-<div class="head"><div><h2>ReferÃªncias de aparelhos</h2><div class="sub" id="count">Verificando banco de dados...</div></div></div>
+<div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">Verificando banco de dados...</div></div></div>
 <section class="grid" id="cards"></section>
 
 <section class="result" id="result"><div class="resultgrid">
- <div><div class="brand" id="rbrand"></div><div class="model" id="rmodel"></div><div class="storage" id="rstorage"></div><div class="bigprice" id="rprice"></div><div class="muted">Estimativa a partir do preÃ§o-base e dos ajustes selecionados.</div></div>
- <div><label for="condition">ConservaÃ§Ã£o</label><select id="condition"><option value="1">Excelente</option><option value=".9" selected>Bom</option><option value=".75">Regular</option><option value=".55">Ruim / com defeito</option></select><label for="battery" style="margin-top:13px">CondiÃ§Ã£o da bateria</label><input id="battery" type="range" min="60" max="100" value="90"><div class="sub" id="batteryText">90%</div><div class="stats"><div class="stat"><span>Compra estimada</span><b id="buy"></b></div><div class="stat"><span>Venda estimada</span><b id="sell"></b></div></div></div>
- </div><div class="actions"><button class="secondary" id="closeBtn">Fechar</button></div></section>
-<footer>celularFIPE Ã© um nome provisÃ³rio e nÃ£o Ã© afiliado Ã  FIPE ou aos fabricantes.</footer><button id="share-whatsapp" onclick="compartilharWhatsApp()" style="background-color: #25D366; color: white; margin-top: 10px; display: none; padding: 10px; border-radius: 8px; border: none; width: 100%; font-weight: bold;">Partilhar no WhatsApp ðŸ“±</button>
+ <div><div class="brand" id="rbrand"></div><div class="model" id="rmodel"></div><div class="storage" id="rstorage"></div><div class="bigprice" id="rprice"></div><div class="muted">Estimativa a partir do preço-base e dos ajustes selecionados.</div></div>
+ <div><label for="condition">Conservação</label><select id="condition"><option value="1">Excelente</option><option value=".9" selected>Bom</option><option value=".75">Regular</option><option value=".55">Ruim / com defeito</option></select><label for="battery" style="margin-top:13px">Condição da bateria</label><input id="battery" type="range" min="60" max="100" value="90"><div class="sub" id="batteryText">90%</div><div class="stats"><div class="stat"><span>Compra estimada</span><b id="buy"></b></div><div class="stat"><span>Venda estimada</span><b id="sell"></b></div></div></div>
+ </div>
+ <div class="actions"><button class="secondary" id="closeBtn">Fechar</button></div>
+</section>
+
+<footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer>
+<button id="share-whatsapp" onclick="compartilharWhatsApp()" style="background-color: #25D366; color: white; margin-top: 10px; display: none; padding: 10px; border-radius: 8px; border: none; width: 100%; font-weight: bold;">Partilhar no WhatsApp </button>
 </main>
 
-<script>// Mostra o botÃ£o do WhatsApp assim que o resultado aparece
-const btnWhatsapp = document.getElementById('share-whatsapp');
-if (btnWhatsapp) {
-  btnWhatsapp.style.display = 'block';
-}
-// VariÃ¡vel global para guardar o Ãºltimo telemÃ³vel consultado
+<script>
+// Variável global para guardar o último telemóvel consultado
 let telemovelAtual = null;
 
-// FunÃ§Ã£o chamada para buscar os dados (atualize a sua funÃ§Ã£o de busca existente com esta lÃ³gica)
-async function buscarCelulares() {
-  let query = supabase.from('celulares').select('*');
-
-  // Filtro de Marca (se aplicÃ¡vel no seu app)
-  const marcaEl = document.getElementById('brand');
-  if (marcaEl && marcaEl.value) {
-    query = query.eq('marca', marcaEl.value);
-  }
-
-  // Filtro de Faixa de PreÃ§o que acabamos de adicionar
-  const faixaPreco = document.getElementById('price-range').value;
-  if (faixaPreco) {
-    query = query.lte('preco', Number(faixaPreco));
-  }
-
-  const { data, error } = await query;
-  if (error) {
-    console.error('Erro ao buscar:', error);
-    return;
-  }
-
-  // Exibir resultados na tela (exemplo bÃ¡sico)
-  // Certifique-se de chamar a funÃ§Ã£o que desenha os cards ou resultados aqui
-}
-
-// FunÃ§Ã£o para mostrar o resultado e ativar o botÃ£o do WhatsApp
-function exibirResultado(celular) {
-  telemovelAtual = celular; // Guarda os dados para a partilha
-
-  // Exemplo de preenchimento dos campos de resultado que jÃ¡ tem no HTML
-  document.getElementById('rbrand').innerText = celular.marca + ' - ' + celular.modelo;
-  
-  // Mostra o botÃ£o do WhatsApp que adicionÃ¡mos
-  const btnWhatsapp = document.getElementById('share-whatsapp');
-  if (btnWhatsapp) {
-    btnWhatsapp.style.display = 'block';
-  }
-}
-
-// FunÃ§Ã£o de partilha para o WhatsApp
-function compartilharWhatsApp() {
-  if (!telemovelAtual) return;
-
-  const texto = `ðŸ“± *Consulta celularFIPE*\n\nModelo: *${telemovelAtual.modelo}*\nPreÃ§o MÃ©dio FIPE: *R$ ${telemovelAtual.preco}*\n\nConsultado via app celularFIPE!`;
-  
-  const urlWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-  window.open(urlWhatsApp, '_blank');
-}
 const seed=[
  {id:1,brand:'Apple',model:'iPhone 13',storage:'128 GB',year:2021,base_price:1900,updated_at:'2026-10-16'},
  {id:2,brand:'Samsung',model:'Galaxy S23',storage:'256 GB',year:2023,base_price:2100,updated_at:'2026-10-16'},
@@ -115,13 +67,24 @@ const money = n => Number(n||0).toLocaleString('pt-BR',{style:'currency',currenc
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 function render(msgExtra){
- const q=$('q').value.trim().toLowerCase(),b=$('brand').value,s=$('storage').value;
- const arr=phones.filter(p=>(!q||`${p.brand} ${p.model} ${p.storage}`.toLowerCase().includes(q))&&(!b||p.brand===b)&&(!s||p.storage===s));
- $('count').textContent = msgExtra ? `${arr.length} modelo(s) â€” ${msgExtra}` : `${arr.length} modelo(s) encontrado(s)`;
+ const q=$('q').value.trim().toLowerCase();
+ const b=$('brand').value;
+ const s=$('storage').value;
+ const faixaPreco=$('price-range').value;
+
+ const arr=phones.filter(p=>{
+  const matchQ = !q || `${p.brand} ${p.model} ${p.storage}`.toLowerCase().includes(q);
+  const matchB = !b || p.brand === b;
+  const matchS = !s || p.storage === s;
+  const matchP = !faixaPreco || Number(p.base_price) <= Number(faixaPreco);
+  return matchQ && matchB && matchS && matchP;
+ });
+
+ $('count').textContent = msgExtra ? `${arr.length} modelo(s) — ${msgExtra}` : `${arr.length} modelo(s) encontrado(s)`;
  $('cards').innerHTML=arr.map(p=>`<article class="card">
   ${p.image_url ? `<img src="${safe(p.image_url)}" alt="${safe(p.model)}" class="phone-thumb">` : ''}
-  <div class="cardtop"><div><div class="brand">${safe(p.brand)}</div><div class="model">${safe(p.model)}</div><div class="storage">${safe(p.storage)} Â· ${safe(p.year)}</div></div><span class="tag">REFERÃŠNCIA</span></div>
-  <div class="price">${money(p.base_price)}</div><div class="muted">PreÃ§o-base de referÃªncia</div><div class="sub">Revisado: ${safe(p.updated_at||'recente')}</div>
+  <div class="cardtop"><div><div class="brand">${safe(p.brand)}</div><div class="model">${safe(p.model)}</div><div class="storage">${safe(p.storage)} · ${safe(p.year)}</div></div><span class="tag">REFERÊNCIA</span></div>
+  <div class="price">${money(p.base_price)}</div><div class="muted">Preço-base de referência</div><div class="sub">Revisado: ${safe(p.updated_at||'recente')}</div>
   <div class="actions"><button class="primary" onclick="openPhone(${p.id})">Avaliar aparelho</button></div>
  </article>`).join('')||'<div class="panel">Nenhum aparelho encontrado.</div>';
 }
@@ -129,27 +92,57 @@ function render(msgExtra){
 window.openPhone = function(id){
  selected=phones.find(p=>Number(p.id)===Number(id));
  if(!selected)return;
+ 
+ // Guarda o telemóvel atual para a partilha via WhatsApp
+ telemovelAtual = selected;
+
  $('result').classList.add('show');$('rbrand').textContent=selected.brand;
  $('rmodel').textContent=selected.model;
- $('rstorage').textContent=`${selected.storage} Â· ${selected.year}`;
+ $('rstorage').textContent=`${selected.storage} · ${selected.year}`;
  $('condition').value='.9';$('battery').value=90;
+ 
  estimate();
+
+ // Mostra o botão do WhatsApp assim que abre a avaliação
+ const btnWhatsapp = document.getElementById('share-whatsapp');
+ if (btnWhatsapp) {
+   btnWhatsapp.style.display = 'block';
+ }
+
  $('result').scrollIntoView({behavior:'smooth',block:'start'});
 };
 
 function estimate(){
  if(!selected)return;
- const c=Number($('condition').value),b=Number($('battery').value),v=Math.round(Number(selected.base_price)*c*(.85+b/100*.15));$('rprice').textContent=money(v);$('buy').textContent=money(v*.75);$('sell').textContent=money(v*1.12);$('batteryText').textContent=$('battery').value+'%';
+ const c=Number($('condition').value),b=Number($('battery').value),v=Math.round(Number(selected.base_price)*c*(.85+b/100*.15));$('rprice').textContent=money(v);
+ $('buy').textContent=money(v*.75);$('sell').textContent=money(v*1.12);
+ $('batteryText').textContent=$('battery').value+'%';
 }
 
-$('searchBtn').onclick=()=>render();$('q').oninput=()=>render();$('brand').onchange=()=>render();$('storage').onchange=()=>render();
-$('clearBtn').onclick=()=>{$('q').value='';$('brand').value='';$('storage').value='';render()};
-$('condition').onchange=estimate;$('battery').oninput=estimate;$('closeBtn').onclick=()=>$('result').classList.remove('show');
+// Função de partilha para o WhatsApp
+function compartilharWhatsApp() {
+  if (!telemovelAtual) return;
+
+  const texto = ` *Consulta celularFIPE*\n\nModelo: *${telemovelAtual.brand} ${telemovelAtual.model} (${telemovelAtual.storage})*\nPreço Médio FIPE: *${money(telemovelAtual.base_price)}*\n\nConsultado via app celularFIPE!`;
+  
+  const urlWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+  window.open(urlWhatsApp, '_blank');
+}
+
+$('searchBtn').onclick=()=>render();
+$('q').oninput=()=>render();$('brand').onchange=()=>render();
+$('storage').onchange=()=>render();$('price-range').onchange=()=>render();
+$('clearBtn').onclick=()=>{$('q').value='';$('brand').value='';$('storage').value='';$('price-range').value='';render()};$('condition').onchange=estimate;
+$('battery').oninput=estimate;
+$('closeBtn').onclick=()=>{$('result').classList.remove('show');
+  const btnWhatsapp = document.getElementById('share-whatsapp');
+  if (btnWhatsapp) btnWhatsapp.style.display = 'none';
+};
 
 // Renderiza imediatamente os modelos para a tela NUNCA travar
 render("Carregando banco online...");
 
-// Tenta ler o config.js automaticamente sem travar a pÃ¡gina se der erro
+// Tenta ler o config.js automaticamente sem travar a página se der erro
 async function conectarBanco(){
  try {
   const cfg = await import('./config.js');
@@ -167,10 +160,10 @@ async function conectarBanco(){
     render("Supabase conectado (tabela vazia)");
    }
   } else {
-   render("Modo demonstraÃ§Ã£o (config.js incompleto)");
+   render("Modo demonstração (config.js incompleto)");
   }
  } catch(e) {
-  render("Modo demonstraÃ§Ã£o (" + e.message + ")");
+  render("Modo demonstração (" + e.message + ")");
  }
 }
 conectarBanco();
