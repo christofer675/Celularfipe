@@ -45,7 +45,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;paddi
 <footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer><button id="share-whatsapp" onclick="compartilharWhatsApp()" style="background-color: #25D366; color: white; margin-top: 10px; display: none; padding: 10px; border-radius: 8px; border: none; width: 100%; font-weight: bold;">Partilhar no WhatsApp 📱</button>
 </main>
 
-<script>// Variável global para guardar o último telemóvel consultado
+<script>// Mostra o botão do WhatsApp assim que o resultado aparece
+const btnWhatsapp = document.getElementById('share-whatsapp');
+if (btnWhatsapp) {
+  btnWhatsapp.style.display = 'block';
+}
+// Variável global para guardar o último telemóvel consultado
 let telemovelAtual = null;
 
 // Função chamada para buscar os dados (atualize a sua função de busca existente com esta lógica)
