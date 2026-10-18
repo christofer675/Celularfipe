@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101827"><title>celularFIPE</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--ink:#182235;--muted:#667085;--line:#e2e7ef;--brand:#176b55;--soft:#e6f5ef;--dark:#101827}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -10,14 +12,13 @@ header{background:var(--dark);color:white;padding:24px 18px 28px}.wrap{max-width
 h1{font-size:clamp(28px,5vw,42px);line-height:1.06;letter-spacing:-1px;margin:27px 0 10px}header p{color:#c5cfdd;line-height:1.5;max-width:640px;margin:0}
 main{max-width:980px;margin:-12px auto 0;padding:0 14px 40px}.panel,.card,.result{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 5px 20px #18223508}
 .fields{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}.search{margin-bottom:15px}label{display:block;font-size:12px;font-weight:750;color:#475467;margin:0 0 7px}
-input,select,button{font:inherit}input,select{width:100%;border:1px solid #d5dce6;border-radius:10px;padding:11px;background:#fff;color:var(--ink);min-width:0}
-button{border:0;border-radius:10px;padding:11px 14px;font-weight:750;cursor:pointer}.primary{background:var(--brand);color:white}.secondary{background:#eef2f6;color:#263346}.danger{background:#fff0ef;color:#a93226}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.notice{background:#fff5d8;border:1px solid #f2df9c;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;margin-bottom:15px}
+input,select,button{font:inherit}input,select{width:100%;border:10px;border:1px solid #d5dce6;border-radius:10px;padding:11px;background:#fff;color:var(--ink);min-width:0}
+button{border:0;border-radius:10px;padding:11px 14px;font-weight:750;cursor:pointer}.primary{background:var(--brand);color:white}.secondary{background:#eef2f6;color:#263346}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:22px 2px 12px}h2{font-size:20px;margin:0}.sub,.muted{color:var(--muted);font-size:13px;line-height:1.5;margin-top:4px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{box-shadow:none;padding:16px}.cardtop{display:flex;justify-content:space-between;gap:8px}.brand{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:800}.model{font-size:18px;font-weight:850;margin:5px 0 3px}.storage{font-size:13px;color:var(--muted)}.price{font-size:25px;font-weight:900;color:var(--brand);margin:16px 0 2px}.tag{font-size:10px;border-radius:99px;padding:5px 8px;background:var(--soft);color:var(--brand);font-weight:800;height:max-content}
 .result{display:none;margin-top:15px}.result.show{display:block}.resultgrid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}.bigprice{font-size:clamp(30px,6vw,44px);font-weight:900;color:var(--brand);letter-spacing:-1px;margin:8px 0}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}.stat{background:#f5f7fa;border-radius:11px;padding:11px}.stat b{display:block;font-size:16px}.stat span{font-size:11px;color:var(--muted)}
-.admin{margin-top:24px}.adminbody{display:none;margin-top:14px}.adminbody.open{display:block}.adminrow{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}.adminrow small{display:block;color:var(--muted);font-size:12px}.status{font-size:12px;color:var(--muted);margin-top:9px}footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;padding:24px 10px}
-@media(max-width:650px){.fields{grid-template-columns:1fr 1fr}.fields .wide{grid-column:1/-1}.grid,.resultgrid{grid-template-columns:1fr}.adminrow{grid-template-columns:1fr 1fr}.adminname{grid-column:1/-1}.head{align-items:start;flex-direction:column}}
+footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;padding:24px 10px}
+@media(max-width:650px){.fields{grid-template-columns:1fr 1fr}.fields .wide{grid-column:1/-1}.grid,.resultgrid{grid-template-columns:1fr}.head{align-items:start;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -30,74 +31,89 @@ button{border:0;border-radius:10px;padding:11px 14px;font-weight:750;cursor:poin
   <div><label for="storage">Armazenamento</label><select id="storage"><option value="">Todos</option><option>64 GB</option><option>128 GB</option><option>256 GB</option><option>512 GB</option></select></div>
  </div><div class="actions"><button class="primary" id="searchBtn">Buscar preços</button><button class="secondary" id="clearBtn">Limpar filtros</button></div>
 </div>
-<div class="notice" id="notice"><b>Nota:</b> preços de demonstração não são cotações atuais. Antes de divulgar o app, substitua os exemplos por referências pesquisadas e documente a metodologia.</div>
-<div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">Carregando modelos...</div></div></div>
+
+<div class="head"><div><h2>Referências de aparelhos</h2><div class="sub" id="count">Iniciando sistema...</div></div></div>
 <section class="grid" id="cards"></section>
+
 <section class="result" id="result"><div class="resultgrid">
  <div><div class="brand" id="rbrand"></div><div class="model" id="rmodel"></div><div class="storage" id="rstorage"></div><div class="bigprice" id="rprice"></div><div class="muted">Estimativa a partir do preço-base e dos ajustes selecionados.</div></div>
  <div><label for="condition">Conservação</label><select id="condition"><option value="1">Excelente</option><option value=".9" selected>Bom</option><option value=".75">Regular</option><option value=".55">Ruim / com defeito</option></select><label for="battery" style="margin-top:13px">Condição da bateria</label><input id="battery" type="range" min="60" max="100" value="90"><div class="sub" id="batteryText">90%</div><div class="stats"><div class="stat"><span>Compra estimada</span><b id="buy"></b></div><div class="stat"><span>Venda estimada</span><b id="sell"></b></div></div></div>
- </div><div class="actions"><button class="primary" id="shareBtn">Compartilhar avaliação</button><button class="secondary" id="closeBtn">Fechar</button></div></section>
-<section class="panel admin">
- <div class="head" style="margin:0"><div><h2>Área administrativa</h2><div class="sub">Entre com a conta autorizada para atualizar os preços online.</div></div><button class="secondary" id="adminToggle">Abrir painel</button></div>
- <div class="adminbody" id="adminBody">
-  <div id="loginArea">
-   <div class="fields" style="margin-top:15px"><div><label for="email">E-mail de administrador</label><input id="email" type="email" autocomplete="username" placeholder="seu@email.com"></div><div><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" placeholder="Senha da conta"></div><div style="align-self:end"><button class="primary" id="loginBtn" style="width:100%">Entrar</button></div></div>
-   <div class="muted">A conta deve ser criada no painel do Supabase e autorizada na tabela admin_users. O cadastro público está desativado neste protótipo.</div>
-  </div>
-  <div id="loggedArea" style="display:none"><div class="actions"><span class="status" id="who"></span><button class="secondary" id="logoutBtn">Sair</button></div><div id="adminRows"></div><div class="actions"><button class="primary" id="saveBtn">Salvar alterações online</button><button class="secondary" id="addBtn">Adicionar aparelho</button></div></div>
-  <div class="status" id="status">Configure config.js e o banco seguindo o README.</div>
- </div>
-</section>
-<footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes. O valor é uma referência estimada, não uma garantia de preço de venda.</footer>
+ </div><div class="actions"><button class="secondary" id="closeBtn">Fechar</button></div></section>
+<footer>celularFIPE é um nome provisório e não é afiliado à FIPE ou aos fabricantes.</footer>
 </main>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
 
-const configured = SUPABASE_URL && SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.length > 20;
-const supabase = configured ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+<script>
+// ============================================================================
+// COLOQUE SUAS CHAVES DO SUPABASE NAS DUAS LINHAS ABAIXO (MANTENHA AS ASPAS):
+// ============================================================================
+const SUPABASE_URL = "COLE_SUA_URL_AQUI";
+const SUPABASE_ANON_KEY = "COLE_SUA_KEY_AQUI";
 
 const seed=[
-{id:1,brand:'Apple',model:'iPhone 11',storage:'128 GB',year:2019,base_price:1000,updated_at:'2026-10-16'},
-{id:2,brand:'Apple',model:'iPhone 12',storage:'128 GB',year:2020,base_price:1400,updated_at:'2026-10-16'},
-{id:3,brand:'Apple',model:'iPhone 13',storage:'128 GB',year:2021,base_price:1900,updated_at:'2026-10-16'},
-{id:4,brand:'Apple',model:'iPhone 14',storage:'128 GB',year:2022,base_price:2500,updated_at:'2026-10-16'},
-{id:5,brand:'Apple',model:'iPhone 15',storage:'128 GB',year:2023,base_price:3200,updated_at:'2026-10-16'},
-{id:6,brand:'Samsung',model:'Galaxy S22',storage:'128 GB',year:2022,base_price:1300,updated_at:'2026-10-16'},
-{id:7,brand:'Samsung',model:'Galaxy S23',storage:'256 GB',year:2023,base_price:2100,updated_at:'2026-10-16'},
-{id:8,brand:'Samsung',model:'Galaxy S24',storage:'256 GB',year:2024,base_price:2800,updated_at:'2026-10-16'},
-{id:9,brand:'Motorola',model:'Moto G84',storage:'256 GB',year:2023,base_price:850,updated_at:'2026-10-16'},
-{id:10,brand:'Xiaomi',model:'Redmi Note 13',storage:'256 GB',year:2024,base_price:900,updated_at:'2026-10-16'}
+{export const SUPABASE_URL = "https://pxsdlkceobpycqndyzuo.supabase.co";
+export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4c2Rsa2Nlb2JweWNxbmR5enVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxODYyNDEsImV4cCI6MjEwNzc2MjI0MX0.g6GQd0xOzOQVkgJ84YDTYtg8u8ug0_C3wd-RLW9suI0";
+{id:3,brand:'Motorola',model:'Moto G84',storage:'256 GB',year:2023,base_price:850,updated_at:'2026-10-16'},
+{id:4,brand:'Xiaomi',model:'Redmi Note 13',storage:'256 GB',year:2024,base_price:900,updated_at:'2026-10-16'}
 ];
 
-let phones=[], selected=null, isAdmin=false;
+let phones=[], selected=null;
 const $=id=>document.getElementById(id), money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
-function status(t){$('status').textContent=t}
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-async function loadPhones(){
- if(configured){
-  try {
-   const {data,error}=await supabase.from('phones').select('*');
-   if(!error && data && data.length > 0){
-    phones=data;
-    status('Modelos carregados do Supabase com sucesso.');
-    return;
-   }
-   if(error){
-    status('Erro ao ler do Supabase: '+error.message);
+async function iniciar(){
+ try {
+  if(SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.length > 20 && window.supabase){
+   $('count').textContent = "Conectando ao banco de dados...";
+   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+   const {data, error} = await client.from('phones').select('*');
+   if(error) {
+    $('count').textContent = "Erro no Supabase: " + error.message + " (Exibindo demonstração)";
+    phones = seed;
+   } else if(data && data.length > 0) {
+    phones = data;
    } else {
-    status('Banco conectado, mas sem modelos na tabela phones.');
+    $('count').textContent = "Tabela phones vazia no Supabase (Exibindo demonstração)";
+    phones = seed;
    }
-  } catch(e) {
-   status('Erro na ligação: '+e.message);
+  } else {
+   phones = seed;
   }
+ } catch(err) {
+  $('count').textContent = "Falha de conexão: " + err.message;
+  phones = seed;
  }
- phones=seed.map(x=>({...x}));
- if(!configured) status('Modo demonstração ativo.');
+ render();
 }
 
 function render(){
  const q=$('q').value.trim().toLowerCase(),b=$('brand').value,s=$('storage').value;
- const arr=phones.filter(p=>(!q||`${p.brand
- 
+ const arr=phones.filter(p=>(!q||`${p.brand} ${p.model} ${p.storage}`.toLowerCase().includes(q))&&(!b||p.brand===b)&&(!s||p.storage===s));
+ if(!$('count').textContent.includes('Erro') && !$('count').textContent.includes('vazia')){$('count').textContent=`${arr.length} modelo(s) encontrado(s)`;
+ }
+ $('cards').innerHTML=arr.map(p=>`<article class="card"><div class="cardtop"><div><div class="brand">${safe(p.brand)}</div><div class="model">${safe(p.model)}</div><div class="storage">${safe(p.storage)} · ${safe(p.year)}</div></div><span class="tag">REFERÊNCIA</span></div><div class="price">${money(p.base_price)}</div><div class="muted">Preço-base de referência</div><div class="sub">Revisado: ${safe(p.updated_at||'recente')}</div><div class="actions"><button class="primary" onclick="openPhone(${p.id})">Avaliar aparelho</button></div></article>`).join('')||'<div class="panel">Nenhum aparelho encontrado.</div>';
+}
+
+window.openPhone = function(id){
+ selected=phones.find(p=>Number(p.id)===id);
+ if(!selected)return;
+ $('result').classList.add('show');$('rbrand').textContent=selected.brand;
+ $('rmodel').textContent=selected.model;
+ $('rstorage').textContent=`${selected.storage} · ${selected.year}`;
+ $('condition').value='.9';$('battery').value=90;
+ estimate();
+ $('result').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+function estimate(){
+ if(!selected)return;
+ const c=Number($('condition').value),b=Number($('battery').value),v=Math.round(Number(selected.base_price)*c*(.85+b/100*.15));$('rprice').textContent=money(v);$('buy').textContent=money(v*.75);$('sell').textContent=money(v*1.12);$('batteryText').textContent=$('battery').value+'%';
+}
+
+$('searchBtn').onclick=render;$('q').oninput=render;$('brand').onchange=render;$('storage').onchange=render;
+$('clearBtn').onclick=()=>{$('q').value='';$('brand').value='';$('storage').value='';render()};
+$('condition').onchange=estimate;$('battery').oninput=estimate;$('closeBtn').onclick=()=>$('result').classList.remove('show');
+
+iniciar();
+</script>
+</body>
+</html>
