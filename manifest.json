@@ -1,14 +1,13 @@
 {
-  "name": "Celular FIPE",
+  "name": "celularFIPE",
   "short_name": "celularFIPE",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#101827",
   "theme_color": "#101827",
-  "description": "Consulte uma referência de preço e estime o valor do seu celular usado.",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4f1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
