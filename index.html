@@ -101,7 +101,8 @@ async function conectarBanco(){
    const client = window.supabase.createClient(url, key);
    const {data, error} = await client.from('phones').select('*');
    if(error){
-    render("Erro no Supabase: " + error.message);
+    render(${(p.image_url || p.image_path) ? `<img src="${safe(p.image_url || p.image_path)}" alt="${safe(p.model)}" class="phone-thumb" referrerpolicy="no-referrer" loading="lazy">` : ''}
+);
    } else if(data && data.length > 0){
     phones = data;
     render("Conectado ao Supabase!");
